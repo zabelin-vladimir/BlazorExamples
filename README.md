@@ -3,6 +3,8 @@ There are two projects:
 1) MyTestWebService
 2) TestsProject
 
+
+[DevExpress UI for Blazor](https://github.com/DevExpress/Blazor) version 0.0.11
 ### MyTestWebService
 A sample project implementing a web API with ASP.NET Core. 
 
