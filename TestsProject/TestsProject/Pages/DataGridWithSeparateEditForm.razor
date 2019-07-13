@@ -1,0 +1,36 @@
+@page "/DataGridWithSeparateEditForm"
+@inject HttpClient Http
+@inject WebServicePath wsp
+@using TestsProject.Data
+
+
+<h1>DxDataGrid for Blazor with a separate edit form</h1>
+@if (categories == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <DxDataGrid Data=@categories
+                ShowFilterRow=false>
+        <DxDataGridColumn Field=@nameof(Categories.CategoryId) Width="150px" Caption="#">
+            <DisplayTemplate>
+                @{
+                    int keyField = (context as Categories).CategoryId;
+                    <a href="/SeparateEditForm/@keyField">Edit</a>
+                }
+            </DisplayTemplate>
+        </DxDataGridColumn>
+        <DxDataGridColumn Field=@nameof(Categories.CategoryName)></DxDataGridColumn>
+        <DxDataGridColumn Field=@nameof(Categories.Description)></DxDataGridColumn>
+    </DxDataGrid>
+}
+
+@functions {
+    List<Categories> categories;
+
+    protected override async Task OnInitAsync()
+    {
+        categories = await Http.GetJsonAsync<List<Categories>>(wsp.Path + "categories");
+    }
+}
