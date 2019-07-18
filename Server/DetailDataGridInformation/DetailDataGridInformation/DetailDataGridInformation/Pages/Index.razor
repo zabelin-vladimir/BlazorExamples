@@ -1,0 +1,80 @@
+﻿@page "/"
+@inject WeatherForecastService ForecastService
+@using DetailDataGridInformation.Data
+<style>
+    .DetailFormLayout {
+        width: 270px;
+    }
+
+        .DetailFormLayout .dxbs-fl-gd.col-md-12 {
+            margin: 0px;
+        }
+
+    .MainGrid th {
+        pointer-events: none;
+    }
+</style>
+<h1>DxDataGrid - Show the detail information in DxFromLayout</h1>
+@if (forecasts == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <p>Show forecast for the specific date:</p>
+    <div style="display:flex;">
+        <div style="width:350px;">
+            <DxDataGrid Data=@forecasts CssClass="MainGrid" AllowDataRowSelection="false" ShowPager="false" ShowFilterRow=false>
+                <DxDataGridDateEditColumn Field=@nameof(WeatherForecast.Date) Width="200px">
+                </DxDataGridDateEditColumn>
+                <DxDataGridColumn Field=@nameof(WeatherForecast.Date) Width="150px" Caption="#">
+                    <DisplayTemplate>
+                        @{
+                            DateTime date = (context as WeatherForecast).Date;
+                            <button @onclick="@(() => { ShowDetail(date); })">Show detail</button>
+                        }
+                    </DisplayTemplate>
+                </DxDataGridColumn>
+            </DxDataGrid>
+        </div>
+        @if (forecast != null)
+        {
+
+            <DxFormLayout CssClass="DetailFormLayout">
+                <DxFormLayoutGroup Caption=@caption>
+                    <DxFormLayoutItem Caption="Temp. (C):" ColSpanMd="12">
+                        <Template>
+                            @forecast.TemperatureC
+                        </Template>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="Temp. (F):" ColSpanMd="12">
+                        <Template>
+                            @forecast.TemperatureF
+                        </Template>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="Summary:" ColSpanMd="12">
+                        <Template>
+                            @forecast.Summary
+                        </Template>
+                    </DxFormLayoutItem>
+                </DxFormLayoutGroup>
+            </DxFormLayout>
+        }
+    </div>
+}
+
+@functions {
+    List<WeatherForecast>
+    forecasts;
+    WeatherForecast forecast;
+    string caption;
+    protected override async Task OnInitAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync();
+    }
+    void ShowDetail(DateTime date)
+    {
+        forecast = forecasts.Where(m => m.Date == date).FirstOrDefault();
+        caption = "Forecast for " + forecast.Date.ToShortDateString();
+    }
+}

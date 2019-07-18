@@ -1,0 +1,45 @@
+﻿@page "/"
+@using CascadingDataGrids.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Cascading DxDataGrids</h1>
+@if (regions == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <DxDataGrid Data=@regions ShowPager="false" ShowFilterRow=false
+                SelectedDataRowChanged=@((dataItem) => OnCategorySelectionChanged(dataItem))>
+        <DxDataGridColumn Field=@nameof(Region.RegionName)></DxDataGridColumn>
+    </DxDataGrid>
+}
+@if (forecasts == null)
+{
+    <h1>Select a region</h1>
+}
+else
+{
+    <DxDataGrid Data=@forecasts ShowPager="false" ShowFilterRow=false>
+        <DxDataGridDateEditColumn Field=@nameof(WeatherForecast.Date)></DxDataGridDateEditColumn>
+        <DxDataGridColumn Field=@nameof(WeatherForecast.Region)></DxDataGridColumn>
+        <DxDataGridColumn Field=@nameof(WeatherForecast.TemperatureC) Caption="Temp. (C)"></DxDataGridColumn>
+        <DxDataGridSpinEditColumn Field=@nameof(WeatherForecast.TemperatureF) Caption="Temp. (F)"></DxDataGridSpinEditColumn>
+        <DxDataGridColumn Field=@nameof(WeatherForecast.Summary)></DxDataGridColumn>
+    </DxDataGrid>
+}
+
+@functions {
+    List<WeatherForecast> forecasts;
+    List<Region> regions;
+
+    protected override async Task OnInitAsync()
+    {
+        regions = await ForecastService.GetRegions();
+    }
+    async void OnCategorySelectionChanged(Region selectedRegion)
+    {
+        forecasts = await ForecastService.GetForecastAsync(selectedRegion.RegionName);
+        await base.Invoke(StateHasChanged);
+    }
+}
