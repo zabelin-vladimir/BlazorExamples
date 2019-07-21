@@ -1,6 +1,6 @@
 using System;
 
-namespace DetailDataGridInformation.Data
+namespace DataGridShowDetailInformation.Data
 {
     public class WeatherForecast
     {
