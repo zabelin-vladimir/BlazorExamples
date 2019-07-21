@@ -1,0 +1,67 @@
+﻿@page "/"
+@inject WeatherForecastService ForecastService
+@using HidingColumns.Data
+
+<style>
+    .ColumnChooserlFormLayout {
+        width: 200px;
+    }
+
+        .ColumnChooserlFormLayout .dxbs-fl-gd.col-md-12 {
+            margin: 0px;
+        }
+</style>
+@if (forecasts == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <div style="display:flex;">
+        <div style="width:500px;">
+            <DxDataGrid Data=@forecasts ShowPager="false">
+                <DxDataGridColumn Field=@nameof(WeatherForecast.TemperatureC) Caption="Temp. (C)" Visible=@IsTempCShown></DxDataGridColumn>
+                <DxDataGridSpinEditColumn Field=@nameof(WeatherForecast.TemperatureF) Caption="Temp. (F)" Visible=@IsTempFShown></DxDataGridSpinEditColumn>
+                <DxDataGridColumn Field=@nameof(WeatherForecast.Summary) Caption="Summary" Visible=@IsSummarShown></DxDataGridColumn>
+                <DxDataGridDateEditColumn Field=@nameof(WeatherForecast.Date) Visible=@IsDateShown></DxDataGridDateEditColumn>
+            </DxDataGrid>
+        </div>
+        <DxFormLayout CssClass="ColumnChooserlFormLayout">
+            <DxFormLayoutGroup Caption="Column visibility">
+                <DxFormLayoutItem Caption="Temp. (C):" ColSpanMd="12">
+                    <Template>
+                        <input id="test" type="checkbox" @bind="IsTempCShown" />
+                    </Template>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Temp. (F):" ColSpanMd="12">
+                    <Template>
+                        <input id="test" type="checkbox" @bind="IsTempFShown" />
+                    </Template>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Summary:" ColSpanMd="12">
+                    <Template>
+                        <input id="test" type="checkbox" @bind="IsSummarShown" />
+                    </Template>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Date:" ColSpanMd="12">
+                    <Template>
+                        <input id="test" type="checkbox" @bind="IsDateShown" />
+                    </Template>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+        </DxFormLayout>
+    </div>
+}
+@functions {
+    WeatherForecast[] forecasts;
+
+    bool IsTempCShown = true;
+    bool IsTempFShown = true;
+    bool IsSummarShown = true;
+    bool IsDateShown = true;
+
+    protected override async Task OnInitAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync();
+    }
+}
