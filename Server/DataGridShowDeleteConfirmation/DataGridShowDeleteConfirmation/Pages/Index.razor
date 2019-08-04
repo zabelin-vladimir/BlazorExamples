@@ -1,0 +1,52 @@
+﻿@page "/"
+
+@inject WeatherForecastService ForecastService
+@inject IJSRuntime JsRuntime;
+@using DataGridShowDeleteConfirmation.Data
+
+
+@if (forecasts == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+<DxDataGrid Data=@forecasts CssClass="MainGrid" AllowDataRowSelection="false" ShowPager="false" ShowFilterRow=false>
+    <DxDataGridColumn Field=@nameof(WeatherForecast.ID) Width="150px" Caption="#">
+        <DisplayTemplate>
+            @{
+                int id = (context as WeatherForecast).ID;
+                <button @onclick="@(() => { DeleteWithConfirmation(id); })">Delete</button>
+            }
+        </DisplayTemplate>
+    </DxDataGridColumn>
+    <DxDataGridDateEditColumn Field=@nameof(WeatherForecast.Date) Width="200px">
+    </DxDataGridDateEditColumn>
+
+    <DxDataGridColumn Field=@nameof(WeatherForecast.TemperatureC) Width="200px">
+    </DxDataGridColumn>
+    <DxDataGridColumn Field=@nameof(WeatherForecast.TemperatureF) Width="200px">
+    </DxDataGridColumn>
+    <DxDataGridColumn Field=@nameof(WeatherForecast.Summary) Width="200px">
+    </DxDataGridColumn>
+</DxDataGrid>
+
+}
+
+@functions {
+    List<WeatherForecast> forecasts;
+    protected override async Task OnInitAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    }
+    async void DeleteWithConfirmation(int id)
+    {
+        //delete
+        bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirmDelete");
+        if (isConfirmed)
+        {
+            forecasts.Remove(forecasts.Find(m => m.ID == id));
+            StateHasChanged();
+        }
+    }
+}

@@ -1,0 +1,26 @@
+﻿@inherits LayoutComponentBase
+
+
+
+<div class="row">
+    <div class="col-12 py-3 header shadow">
+        <button @onclick="ToggleNavMenu" class="btn btn-info">Burger button</button>
+        Header
+    </div>
+    <div class="col-md-3 col-sm-12 py-3 @NavMenuCssClass sidebar ">
+        <NavMenu />
+    </div>
+    <div class="@MainContentCssClass col-sm-12 py-3">
+        @Body
+    </div>
+</div>
+@code {
+    bool collapseNavMenu = false;
+
+    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    string MainContentCssClass => collapseNavMenu ? "col-md-12" : "col-md-9";
+
+    void ToggleNavMenu() {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

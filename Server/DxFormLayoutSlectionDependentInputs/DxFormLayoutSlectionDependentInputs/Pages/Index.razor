@@ -1,0 +1,103 @@
+﻿@page "/"
+
+<style>
+    .MyFM {
+        width: 350px;
+    }
+</style>
+<DxFormLayout CssClass="MyFM" CaptionPosition=@CaptionPosition.Vertical>
+    <DxFormLayoutGroup Caption="Contact me through:">
+        <DxFormLayoutItem ColSpanMd="3">
+            <Template>
+                <div class="custom-control custom-radio">
+                    <input type="radio" name="customRadio" id="customRadio1" class="custom-control-input" checked=@isEmail
+                           @onchange=@(() => { isEmail = true; isPost = isPhone = false; }) />
+                    <label class="custom-control-label" for="customRadio1">Email</label>
+                </div>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem ColSpanMd="9" Visible=@isEmail>
+            <Template>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" id="customCheckBox" class="custom-control-input" @bind=@isAlternateEmail />
+                    <label class="custom-control-label" for="customCheckBox">Alternate Email</label>
+                </div>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem ColSpanMd="12">
+            <Template>
+                <div class="custom-control custom-radio">
+                    <input type="radio" name="customRadio" id="customRadio2" class="custom-control-input" checked=@isPhone
+                           @onchange=@(() => { isPhone = true; isPost = isEmail = false; }) />
+                    <label class="custom-control-label" for="customRadio2">Phone</label>
+                </div>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem ColSpanMd="12">
+            <Template>
+                <div class="custom-control custom-radio">
+                    <input type="radio" name="customRadio" id="customRadio3" class="custom-control-input" checked=@isPost
+                           @onchange=@(() => { isPost = true; isEmail = isPhone = false; }) />
+                    <label class="custom-control-label" for="customRadio3">Postal Service</label>
+                </div>
+            </Template>
+        </DxFormLayoutItem>
+    </DxFormLayoutGroup>
+    <DxFormLayoutGroup Visible=@isEmail>
+        <DxFormLayoutItem Caption="Email:" ColSpanMd="12">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Retype Email:" ColSpanMd="12">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Alternate Email:" ColSpanMd="12" Visible=@isAlternateEmail>
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Retype Alternate Email:" ColSpanMd="12" Visible=@isAlternateEmail>
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+    </DxFormLayoutGroup>
+    <DxFormLayoutGroup Visible=@isPhone>
+        <DxFormLayoutItem Caption="Code:" ColSpanMd="3">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Phone:" ColSpanMd="9">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+    </DxFormLayoutGroup>
+    <DxFormLayoutGroup Visible=@isPost>
+        <DxFormLayoutItem Caption="Address:" ColSpanMd="12">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="City:" ColSpanMd="8">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Zip Code:" ColSpanMd="4">
+            <Template>
+                <DxTextBox></DxTextBox>
+            </Template>
+        </DxFormLayoutItem>
+    </DxFormLayoutGroup>
+</DxFormLayout>
+@code {
+    bool isEmail = true;
+    bool isPhone = false;
+    bool isPost = false;
+    bool isAlternateEmail = false;
+}

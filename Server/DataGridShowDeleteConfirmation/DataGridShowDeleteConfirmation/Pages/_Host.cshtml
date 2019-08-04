@@ -1,0 +1,27 @@
+﻿@page "/"
+@namespace DataGridShowDeleteConfirmation.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataGridShowDeleteConfirmation</title>
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="~/dx-blazor.css" rel="stylesheet" />
+    <script src="~/dx-blazor.js"></script>
+</head>
+<body>
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure that you want to delete this record?");
+        };
+    </script>
+    <app>@(await Html.RenderComponentAsync<App>())</app>
+
+    <script src="_framework/blazor.server.js"></script>
+</body>
+</html>

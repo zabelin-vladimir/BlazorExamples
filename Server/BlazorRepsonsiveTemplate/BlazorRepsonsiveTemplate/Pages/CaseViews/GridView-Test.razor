@@ -1,0 +1,22 @@
+﻿@inject WeatherForecastService ForecastService
+@using BlazorRepsonsiveTemplate.Data
+
+@if (forecasts == null) {
+    <h1>Loading...</h1>
+}
+else {
+    <DxDataGrid Data=@forecasts
+                PageSize=5>
+        <DxDataGridColumn Field=@nameof(WeatherForecast.TemperatureC) Caption=@("Temp. (\x2103)")></DxDataGridColumn>
+        <DxDataGridSpinEditColumn Field=@nameof(WeatherForecast.TemperatureF) Caption=@("Temp. (\x2109)")></DxDataGridSpinEditColumn>
+        <DxDataGridColumn Field=@nameof(WeatherForecast.Summary) Caption="Summary"></DxDataGridColumn>
+        <DxDataGridDateEditColumn Field=@nameof(WeatherForecast.Date)></DxDataGridDateEditColumn>
+    </DxDataGrid>
+}
+
+@code {
+    WeatherForecast[] forecasts;
+    protected override async Task OnInitAsync() {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Today);
+    }
+}

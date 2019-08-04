@@ -1,0 +1,115 @@
+﻿@page "/"
+@using DxSchedulerProperties.Model;
+<style>
+    .DetailFormLayout {
+        width: 450px;
+    }
+
+        .DetailFormLayout .dxbs-fl-gd.col-md-12 {
+            margin: 0px;
+        }
+        .dxbs-view-selector {
+            display:none!important;
+        }
+</style>
+<div style="display:flex;">
+    <div style="width:100%;">
+        <DxScheduler Id="schedulerDayView" FirstDayOfWeek=@firstDayOfWeek
+                     StartDate=@(DateTime.Today)
+                     DataStorage=@DataStorage ActiveViewType=@activeView>
+            <DxSchedulerDayView DayCount=@dayCount ShowWorkTimeOnly=@showWorkTimeOnly TimeIndicatorVisibility=@timeIndicatorVisibility
+                                TimeScale=@timeScale VisibleTime=@visibleTime WorkTime=@workTime>
+            </DxSchedulerDayView>
+            <DxSchedulerWorkWeekView ShowWorkTimeOnly=@showWorkTimeOnly TimeIndicatorVisibility=@timeIndicatorVisibility>
+            </DxSchedulerWorkWeekView>
+            <DxSchedulerWeekView ShowWorkTimeOnly=@showWorkTimeOnly TimeIndicatorVisibility=@timeIndicatorVisibility>
+            </DxSchedulerWeekView>
+        </DxScheduler>
+    </div>
+    <DxFormLayout CssClass="DetailFormLayout" CaptionPosition=@CaptionPosition.Vertical>
+        <DxFormLayoutItem Caption="Active view:" ColSpanMd="12">
+            <Template>
+                <DxComboBox Data=@views @bind-SelectedItem=@activeView></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Show work time only:" ColSpanMd="12">
+            <Template>
+                <input type="checkbox" @bind=@showWorkTimeOnly />
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Day count:" ColSpanMd="12" Visible=@isDayView>
+            <Template>
+                <DxSpinEdit @bind-Value=@dayCount MinValue="1" MaxValue="14"></DxSpinEdit>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Time indicator visibility:" ColSpanMd="12">
+            <Template>
+                <DxComboBox Data=@timeIndicatorVisibilities @bind-SelectedItem=@timeIndicatorVisibility></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Time scale:" ColSpanMd="12" Visible=@isDayView>
+            <Template>
+                <DxComboBox Data=@timeScalse @bind-SelectedItem=@timeScale></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Visible time:" ColSpanMd="12" Visible=@isDayView>
+            <Template>
+                <DxComboBox Data=@timeRanges @bind-SelectedItem=@visibleTime></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+        <DxFormLayoutItem Caption="Work time:" ColSpanMd="12" Visible=@isDayView>
+            <Template>
+                <DxComboBox Data=@timeRanges @bind-SelectedItem=@workTime></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+
+        <DxFormLayoutItem Caption="First day of week:" ColSpanMd="12" Visible=@isNotDayView>
+            <Template>
+                <DxComboBox Data=@daysOfWeek @bind-SelectedItem=@firstDayOfWeek></DxComboBox>
+            </Template>
+        </DxFormLayoutItem>
+    </DxFormLayout>
+</div>
+@code {
+    DxSchedulerDataStorage DataStorage = new DxSchedulerDataStorage() {
+        AppointmentsSource = AppointmentCollection.DataSource,
+        AppointmentMappings = new DxSchedulerAppointmentMappings() {
+            Id = "AppointmentId",
+            Start = "StartDate",
+            End = "EndDate",
+            Subject = "Caption",
+            AllDay = "AllDay",
+            Location = "Location",
+            Description = "Description",
+            LabelId = "Label",
+            StatusId = "Status"
+        }
+    };
+    IEnumerable<SchedulerViewType> views = Enum.GetValues(typeof(SchedulerViewType)).Cast<SchedulerViewType>();
+    private SchedulerViewType _activeView = SchedulerViewType.Week;
+    SchedulerViewType activeView { get => _activeView; set { _activeView = value; base.Invoke(StateHasChanged); } }
+    bool _showWorkTimeOnly = true;
+    bool showWorkTimeOnly { get => _showWorkTimeOnly; set { _showWorkTimeOnly = value; base.Invoke(StateHasChanged); } }
+    int _dayCount = 2;
+    int dayCount { get => _dayCount; set { _dayCount = value; base.Invoke(StateHasChanged); } }
+    IEnumerable<SchedulerTimeIndicatorVisibility> timeIndicatorVisibilities = Enum.GetValues(typeof(SchedulerTimeIndicatorVisibility)).Cast<SchedulerTimeIndicatorVisibility>();
+    SchedulerTimeIndicatorVisibility _timeIndicatorVisibility = SchedulerTimeIndicatorVisibility.Always;
+    SchedulerTimeIndicatorVisibility timeIndicatorVisibility { get => _timeIndicatorVisibility; set { _timeIndicatorVisibility = value; base.Invoke(StateHasChanged); } }
+    bool isDayView { get => _activeView == SchedulerViewType.Day; }
+    bool isNotDayView { get => _activeView != SchedulerViewType.Day; }
+    TimeSpan _timeScale = new TimeSpan(0, 15, 0);
+    TimeSpan timeScale { get => _timeScale; set { _timeScale = value; base.Invoke(StateHasChanged); } }
+    IEnumerable<TimeSpan> timeScalse = (new TimeSpan[] { new TimeSpan(0, 15, 0), new TimeSpan(0, 30, 0), new TimeSpan(1, 0, 0), new TimeSpan(2, 0, 0) }).Cast<TimeSpan>();
+    DxSchedulerTimeSpanRange _visibleTime = new DxSchedulerTimeSpanRange(new TimeSpan(7, 0, 0), new TimeSpan(21, 0, 0));
+    DxSchedulerTimeSpanRange visibleTime { get => _visibleTime; set { _visibleTime = value; base.Invoke(StateHasChanged); } }
+    IEnumerable<DxSchedulerTimeSpanRange> timeRanges = (new DxSchedulerTimeSpanRange[] {
+        new DxSchedulerTimeSpanRange(new TimeSpan(7, 0, 0), new TimeSpan(21, 0, 0)),
+        new DxSchedulerTimeSpanRange(new TimeSpan(15, 0, 0), new TimeSpan(23, 30, 0)),
+        new DxSchedulerTimeSpanRange(new TimeSpan(9, 0, 0), new TimeSpan(18, 0, 0))
+    }).Cast<DxSchedulerTimeSpanRange>();
+    DxSchedulerTimeSpanRange _workTime = new DxSchedulerTimeSpanRange(new TimeSpan(7, 0, 0), new TimeSpan(21, 0, 0));
+    DxSchedulerTimeSpanRange workTime { get => _workTime; set { _workTime = value; base.Invoke(StateHasChanged); } }
+    DayOfWeek _firstDayOfWeek = DayOfWeek.Monday;
+    DayOfWeek firstDayOfWeek { get => _firstDayOfWeek; set { _firstDayOfWeek = value; base.Invoke(StateHasChanged); } }
+    IEnumerable<DayOfWeek> daysOfWeek = Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>();
+}
